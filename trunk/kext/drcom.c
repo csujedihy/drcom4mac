@@ -78,9 +78,10 @@ drcom_printf(const char *fmt, ...)
 #define THIRD_OCTET(X) ((ntohl((X)) & 0x0000FF00) >> 8)
 #define FOURTH_OCTET(X) (ntohl((X)) & 0x000000FF)
 
-static inline void dprint_sockaddr(const struct sockaddr_in * sockaddr)
+static inline void dprint_sockaddr(const socket_t so, const struct sockaddr_in * sockaddr)
 {
-	dprintf("%03d.%03d.%03d.%03d:%d",
+	dprintf("Socket so=0x%x: %03d.%03d.%03d.%03d:%d",
+		so,
 		FIRST_OCTET(sockaddr->sin_addr.s_addr),
 		SECOND_OCTET(sockaddr->sin_addr.s_addr),
 		THIRD_OCTET(sockaddr->sin_addr.s_addr),
@@ -264,7 +265,7 @@ autologout_timer_func()
 {
 	dprintf("autologout_timer_func() is triggered.");
 	
-	// Verify g_auth_mode_lock in case it has been released.
+	// Verify g_auth_mode_lock, in case it has been released.
 	if (NULL == g_auth_mode_lock)
 		return;
 	
@@ -275,12 +276,14 @@ autologout_timer_func()
 		if (g_active)
 		{
 			// Re-install a timer for the next period.
-			install_autologout_timer();		
+			install_autologout_timer();
+			dprintf("Internet connection is active.");
 		}
 		else
 		{
-			// No active traffic over the past 10 minutes.
+			// No active traffic over the past DRCOM_AUTOLOGOUT_IDLE seconds.
 			proc_signal(g_pid, SIGUSR1);
+			dprintf("Autologout signal has been sent.");
 		}
 	}
 	lck_rw_unlock_shared(g_auth_mode_lock);
@@ -353,7 +356,7 @@ drcom_tcp_attach_func(void ** cookie, socket_t so)
 	// Ignore all sockets by default
 	drcom_cookie_ptr->ignored = true;
 		
-	dprintf("Drcom TCP filter has been attached to a socket.");
+	dprintf("Drcom TCP filter has been attached to a socket (so=0x%x)", so);
 	return 0;
 }
 
@@ -366,7 +369,7 @@ drcom_tcp_detach_func(void * cookie, socket_t so)
 	// We can release cookie now
 	_FREE(cookie, M_TEMP);
 	
-	dprintf("Drcom TCP filter has been detached from a socket.");
+	dprintf("Drcom TCP filter has been detached from a socket (so=0x%x)", so);
 }
 
 static errno_t	
@@ -393,8 +396,6 @@ drcom_tcp_connect_out_func(
 	assert(sizeof(struct sockaddr_in) <= to->sa_len);	
 	struct sockaddr_in * addr = (struct sockaddr_in *)to;	
 	
-	dprint_sockaddr(addr);
-	
 	// Check whether this socket should be ignored according to its destination
 	// IP address. Note: all sockets are ignored by default.
 	if (!is_excluded(addr))
@@ -404,7 +405,8 @@ drcom_tcp_connect_out_func(
 		drcom_cookie_ptr->auth_done = false;
 		drcom_cookie_ptr->auth_mbuf_ref = NULL;
 			
-		dprintf("Authentication has been enabled for this socket.");
+		dprint_sockaddr(so, addr);
+		dprintf("Authentication has been enabled for this socket (so=0x%x)", so);
 	}
 	
 	return 0;
@@ -436,7 +438,7 @@ drcom_tcp_data_in_func(
 	if (drcom_cookie_ptr->ignored)
 		return 0;
 	
-	dprintf("drcom_data_in_func() is triggered in monitored socket.");
+	dprintf("drcom_data_in_func() is triggered in monitored socket (so=0x%x)", so);
 	
 	// Set the active flag.
 	g_active = true;
@@ -471,7 +473,7 @@ drcom_tcp_data_out_func(
 	if (drcom_cookie_ptr->ignored)
 		return 0;
 	
-	dprintf("drcom_data_out_func() is triggered in monitored socket.");
+	dprintf("drcom_data_out_func() is triggered in monitored socket (so=0x%x)", so);
 	
 	// Set the active flag.
 	g_active = true;
@@ -573,7 +575,7 @@ drcom_tcp_data_out_func(
 	}
 	else
 	{
-		dprintf("Authentication data has been sent.");
+		dprintf("Authentication data has been sent for this socket (so=0x%x)", so);
 		
 		drcom_cookie_ptr->auth_done = true;
 		result = 0;		
@@ -709,14 +711,14 @@ drcom_udp_attach_func(void ** cookie, socket_t so)
 	}
 	lck_rw_unlock_shared(g_auth_mode_lock);
 	
-	dprintf("Drcom UDP filter has been attached to a socket.");
+	dprintf("Drcom UDP filter has been attached to a socket (so=0x%x)", so);
 	return 0;
 }
 
 static void
 drcom_udp_detach_func(void * cookie, socket_t so)
 {
-	dprintf("Drcom UDP filter has been detached from a socket.");
+	dprintf("Drcom UDP filter has been detached from a socket (so=0x%x)", so);
 }
 
 static errno_t
@@ -753,7 +755,7 @@ drcom_udp_data_in_func(
 		// Set the active flag.
 		g_active = true;
 		
-		dprintf("drcom_udp_data_in_func() is triggered for monitored package.");
+		dprintf("drcom_udp_data_in_func() is triggered in monitored socket (so=0x%x)", so);
 	}
 	
 	return 0;
@@ -793,7 +795,7 @@ drcom_udp_data_out_func(
 		// Set the active flag.
 		g_active = true;
 		
-		dprintf("drcom_udp_data_out_func() is triggered for monitored package.");
+		dprintf("drcom_udp_data_out_func() is triggered in monitored socket (so=0x%x)", so);
 	}
 	
 	return 0;
