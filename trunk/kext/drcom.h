@@ -10,10 +10,10 @@
 #ifndef __DRCOM_H__
 #define __DRCOM_H__
 
-#define DRCOM_SO_BASE_CTL		(64+2048+64)
+#define MYBUNDLEID				"edu.toronto.eecg.kext.drcom"
 
-#define DRCOM_SO_SET_AUTH		DRCOM_SO_BASE_CTL
-#define DRCOM_SO_SET_PARAMS		(DRCOM_SO_BASE_CTL+1)
+#define DRCOM_CTL_AUTH			1
+#define DRCOM_CTL_PARAMS		2
 
 #define DRCOM_AUTH_MODE_OFF		0
 #define DRCOM_AUTH_MODE_ON		1

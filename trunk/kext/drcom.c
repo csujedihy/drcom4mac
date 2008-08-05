@@ -21,11 +21,8 @@
 
 #define DEBUG
 
-#define MYBUNDLEID					"edu.toronto.eecg.kext.drcom"
 #define DRCOM_TCP_FILTER_HANDLE		0x2e33677d
 #define DRCOM_UDP_FILTER_HANDLE		0x2e33677e
-
-#define CONTROLLER_FILTER_HANDLE	0x7e23673d
 
 // Global variables without lock protection
 static kern_ctl_ref g_drcom_ctl_ref = NULL;
@@ -956,7 +953,7 @@ handle_cmd_set_params(const void * data, size_t data_len)
 	// Verify the length of data
 	if (NULL == data || data_len < sizeof(struct drcom_set_params_opt))
 	{
-		dprintf("Invalid parameter for DRCOM_SO_SET_PARAMS");
+		dprintf("Corrupted data for DRCOM_CTL_PARAMS.");
 		return EINVAL;
 	}
 		
@@ -969,7 +966,7 @@ handle_cmd_set_params(const void * data, size_t data_len)
 		size_t list_len = set_params_opt_ptr->exclude_count * sizeof(struct exclude_entry);				
 		if (data_len < (sizeof(struct drcom_set_params_opt) + list_len))
 		{
-			dprintf("Invalid parameter for DRCOM_SO_SET_PARAMS");
+			dprintf("Corrupted exclude list.");
 			return EINVAL;
 		}
 		
@@ -1011,7 +1008,7 @@ handle_cmd_set_auth(const void * data, size_t data_len)
 	// Verify the length of optval
 	if (NULL == data || data_len < sizeof(struct drcom_set_auth_opt))
 	{
-		dprintf("Invalid parameter for DRCOM_SO_SET_AUTH");
+		dprintf("Corrupted data for DRCOM_CTL_AUTH.");
 		return EINVAL;
 	}
 	
@@ -1084,6 +1081,16 @@ unlock:
 }
 
 static errno_t
+drcom_ctl_connect_func(
+    kern_ctl_ref kctlref, 
+    struct sockaddr_ctl * sac, 
+    void ** unitinfo)
+{
+	// Do nothing here.
+	return 0;
+}
+
+static errno_t
 drcom_ctl_setopt_func(
     kern_ctl_ref kctlref,
     u_int32_t unit,
@@ -1092,12 +1099,13 @@ drcom_ctl_setopt_func(
     void * data,
     size_t len)	
 {
+	// opt dispatcher
 	switch (opt)
 	{
-		case DRCOM_SO_SET_PARAMS:
+		case DRCOM_CTL_PARAMS:
 			return handle_cmd_set_params(data, len);
 		
-		case DRCOM_SO_SET_AUTH:
+		case DRCOM_CTL_AUTH:
 			return handle_cmd_set_auth(data, len);
 			
 		default:
@@ -1116,8 +1124,8 @@ static struct kern_ctl_reg drcom_ctl_reg = {
 	0,						/* ctl_unit - ignored when CTL_FLAG_REG_ID_UNIT not set */
 	CTL_FLAG_PRIVILEGED,	/* privileged access required to access this filter */
 	0,						/* use default send size buffer */
-	0,						/* use default send size buffer */
-	NULL,					/* called when a connection request is accepted */
+	0,						/* use default receive size buffer */
+	drcom_ctl_connect_func,	/* called when a connection request is accepted (requied field)*/
 	NULL,					/* called when a connection becomes disconnected */
 	NULL,					/* ctl_send_func - handles data sent from the client to kernel control */
 	drcom_ctl_setopt_func,	/* called when the user process makes the setsockopt call */
@@ -1125,7 +1133,7 @@ static struct kern_ctl_reg drcom_ctl_reg = {
 };
 
 static errno_t
-install_controller_filter()
+install_drcom_controller()
 {
 	errno_t retval;
 	
@@ -1142,14 +1150,14 @@ install_controller_filter()
 	}
 	else
 	{
-		dprintf("ctl_register failed (errno=%d)", retval);
+		dprintf("ctl_register() failed (errno=%d)", retval);
 	}	
 	
 	return retval;
 }
 
 static errno_t
-uninstall_controller_filter()
+uninstall_drcom_controller()
 {
 	errno_t retval = 0;
 	
@@ -1186,7 +1194,7 @@ kern_return_t drcom_start(kmod_info_t * ki, void * d)
 		return KERN_RESOURCE_SHORTAGE;
 	}		
 	
-	retval = install_controller_filter();
+	retval = install_drcom_controller();
 	if (retval)
 	{
 		dprintf("install_controller_filter() failed (errno=%d)", retval);
@@ -1197,7 +1205,7 @@ kern_return_t drcom_start(kmod_info_t * ki, void * d)
     return KERN_SUCCESS;
 	
 fail:
-	uninstall_controller_filter();	
+	uninstall_drcom_controller();	
 	release_locks();
 	
 	return KERN_FAILURE;
@@ -1222,10 +1230,10 @@ drcom_stop (kmod_info_t * ki, void * d)
 		return KERN_FAILURE;		
 	}		
 	
-	retval = uninstall_controller_filter();
+	retval = uninstall_drcom_controller();
 	if (retval)
 	{
-		dprintf("uninstall_controller_filter() failed (errno=%d)", retval);
+		dprintf("uninstall_drcom_controller() failed (errno=%d)", retval);
 		return KERN_FAILURE;		
 	}
 
