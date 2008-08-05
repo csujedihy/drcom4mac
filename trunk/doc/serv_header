@@ -1,0 +1,11 @@
+This struct is used in non-message outgoing packets.
+
+struct drcom_serv_header
+{
+  u_int16_t pkt_type;
+  u_int8_t zero0;
+  u_int8_t len;
+} __attribute__ ((__packed__));
+
+pkt_type and len are specific to the packet.
+

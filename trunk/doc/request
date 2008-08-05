@@ -1,0 +1,19 @@
+20 bytes
+
+We send this packet when we want to login, logout, or change the password.
+
+Upon receiving this packet, the server replies with a CHALLENGE packet.
+
+struct drcom_request
+{
+  struct drcom_host_header host_header;
+} __attribute__ ((__packed__));
+
+pkt_type is 01 00.
+
+len is 4.
+
+checksum0 is not a checksum here:
+- checksum0[0] is 01
+- the rest is null
+

@@ -1,0 +1,62 @@
+After sending REQUEST and receiving CHALLENGE, we send a login request packet:
+
+struct drcom_login_packet
+{
+  struct drcom_host_header host_header;
+  char username[36];
+  u_int8_t unknown0;
+  u_int8_t mac_code;
+  u_int8_t mac_xor[6];
+  u_int8_t checksum1[16];
+  u_int8_t num_nic;
+  u_int32_t nic[4];
+  u_int8_t checksum2_half[8];
+  u_int8_t dog;
+  u_int8_t zero1[4];
+  struct drcom_host host_info;
+  u_int8_t zero1[96];
+  u_int8_t unknown1;
+  u_int8_t unknown2;
+  u_int8_t unknown3[2];
+  u_int8_t unknown4[8];
+} __attribute__ ((__packed__));
+
+pkt_type is PKT_LOGIN (0x0103).
+
+len is strlen(username) + sizeof(struct drcom_host_header).
+
+username is the username padded with null bytes to make 36 bytes.
+
+unknown0 is 0x18.
+
+mac_code is 1 when there is only one nic, 2 if there are more.
+
+mac_xor is the mac of the nic used to connect to the server, xor'ed with the
+first 6 bytes of checksum0 (only 6 bytes, because the mac is only 6 bytes long).
+
+checksum1 is MD5 checksum of:
+- 0x01
+- password (excluding null bytes)
+- challenge value
+- 00 00 00 00
+concatenated together.
+
+num_nic is the number of nics in the system.
+
+nic is an array containing the ip addresses of nics in the system.
+
+checksum2_half is the first 8 bytes of MD5 checksum of:
+- the beginning of the packet up to (including) nic
+- 14 00 07 0b
+concatenated together.
+
+dog is 1 if TcpIpDog.dll is enabled, 0 if it is disabled.
+
+unknown1 is 01.
+
+unknown2 is 00.
+
+unknown3 is 01 08.
+
+unknown4 is unknown but maybe we can use something random at the moment.
+

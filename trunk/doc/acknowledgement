@@ -1,0 +1,53 @@
+91 bytes (or 55 + n * 12 ?)
+
+This packet is sent by the server as a closing packet in
+the login, logout, and password change sequences. On failure,
+only the first 5 bytes are filled in.
+
+struct drcom_acknowledgement
+{
+  struct drcom_serv_header serv_header;
+  u_int8_t status;
+  u_int32_t time_usage;
+  u_int32_t vol_usage;
+  u_int8_t unknown0[10];
+  struct drcom_auth auth_info;
+  u_int8_t unknown1[8];
+  struct
+  {
+    u_int32_t addr;
+    u_int32_t mask;
+    u_int32_t zero0;
+  } freeip[3] __attribute__ ((__packed__)); /* or freeip[0] / freeip[1] ? */
+} __attribute__ ((__packed__));
+
+pkt_type is:
+- 04 00 for success
+- 05 00 for failure
+
+len is 5.
+
+on failure, status is:
+- 0x03: wrong username or password
+- 0x05: this account is disabled
+- 0x15: code 21 error
+
+/*
+on success, status is:
+- 0x05: login successful (without TcpIpDog.dll)
+- 0x07: password change successful
+- 0x15: login successful (with TcpIpDog.dll)
+*/
+
+time_usage is total login duration, in minutes (LSB).
+
+vol_usage is total bandwidth used, in KB (LSB).
+
+unknown0 is ff ff ff ff ff 00 00 00 00 00.
+
+unknown1 is b0 05 04 00 00 00 00 00.
+
+freeip is an array containing the network addresses
+that can be accessed without logging in.
+The last element in this array is 1.0.0.0/0
+

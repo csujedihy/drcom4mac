@@ -1,0 +1,18 @@
+After sending REQUEST and receiving CHALLENGE, we send a logout request packet:
+
+struct drcom_logout_packet
+{
+  struct drcom_host_header host_header;
+  char username[36];
+  u_int8_t unknown0;
+  u_int8_t mac_code;
+  u_int8_t mac_xor[6];
+  struct drcom_auth auth_info;
+} __attribute__ ((__packed__));
+
+pkt_type is 06 01.
+
+len is strlen(username) + sizeof(struct drcom_host_header).
+
+unknown0 is 0x18 (as in drcom_login_packet).
+

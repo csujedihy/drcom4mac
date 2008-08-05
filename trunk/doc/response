@@ -1,0 +1,50 @@
+36 bytes
+
+Every 100 seconds, the server sends a challenge packet:
+
+struct drcom_serv_msg
+{
+  u_int8_t m;
+  u_int8_t mt;
+  u_int8_t msg[0x640 - 1 - 1];
+} __attribute__ ((__packed__));
+
+m is 'M'.
+
+For this challenge packet, mt is '&'.
+
+msg is 2 bytes long.
+
+We respond with this packet:
+
+struct drcom_host_msg
+{
+  u_int8_t msgtype;
+  u_int8_t msg[19];
+  struct drcom_auth auth_info;
+};
+
+msgtype is 0xfe.
+
+msg[0] is obtained this way:
+1. Copy checksum0 from drcom_login_packet.
+2. Concatenate the checksum with password (NULL bytes excluded).
+3. Calculate the MD5 checksum of the concatenated string.
+4. Fold the checksum by word (that is, add the checksum word-by-word).
+5. XOR this word with the word obtained from the challenge packet.
+6. Add the low and high bytes together.
+The resulting byte is stored in msg[0];
+
+msg[1] is 0x01.
+
+The next 16 bytes of msg is obtained by calculating the MD5 checksum of:
+- msgtype
+- msg[0]
+- msg[1]
+- 14 00 07 0b
+- word from challenge packet
+
+msg[18] is 0xff or 0x77 (or what ?).
+
+auth_info is obtained in acknowledgement in the login process.
+

@@ -1,0 +1,20 @@
+This struct is used in non-message outgoing packets.
+
+struct drcom_host_header
+{
+  u_int16_t pkt_type;
+  u_int8_t zero;
+  u_int8_t len;
+  u_int8_t checksum[16];
+} __attribute__ ((__packed__));
+
+pkt_type and len are specific to the packet.
+
+checksum0 is MD5 checksum of:
+- pkt_type
+- challenge value
+- password (excluding null bytes)
+concatenated together.
+
+checksum0 may be not a checksum, such as in the request packet.
+
