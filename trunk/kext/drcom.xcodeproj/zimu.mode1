@@ -190,24 +190,24 @@
 			<key>Content</key>
 			<dict>
 				<key>PBXProjectModuleGUID</key>
-				<string>223BFD3C0E48D84D001D4BBF</string>
+				<string>22958A000E48F02100711AEA</string>
 				<key>PBXProjectModuleLabel</key>
-				<string>drcom.c</string>
+				<string>errno.h</string>
 				<key>PBXSplitModuleInNavigatorKey</key>
 				<dict>
 					<key>Split0</key>
 					<dict>
 						<key>PBXProjectModuleGUID</key>
-						<string>223BFD3D0E48D84D001D4BBF</string>
+						<string>22958A010E48F02100711AEA</string>
 						<key>PBXProjectModuleLabel</key>
-						<string>drcom.c</string>
+						<string>errno.h</string>
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>223ED8F10E48DE1D00EFFF1F</string>
+						<string>22958A8D0E48F92F00711AEA</string>
 						<key>history</key>
 						<array>
-							<string>223BFD4F0E48DA8B001D4BBF</string>
+							<string>22958A020E48F02100711AEA</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -219,11 +219,11 @@
 			<key>Geometry</key>
 			<dict>
 				<key>Frame</key>
-				<string>{{0, 20}, {1330, 733}}</string>
+				<string>{{0, 20}, {1260, 668}}</string>
 				<key>PBXModuleWindowStatusBarHidden2</key>
 				<false/>
 				<key>RubberWindowFrame</key>
-				<string>73 104 1330 774 0 0 1440 878 </string>
+				<string>15 164 1260 709 0 0 1440 878 </string>
 			</dict>
 		</dict>
 	</array>
@@ -306,9 +306,8 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>4</integer>
-									<integer>1</integer>
-									<integer>0</integer>
+									<integer>12</integer>
+									<integer>9</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -359,10 +358,16 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>223ED8F00E48DE1D00EFFF1F</string>
+										<string>22958A8C0E48F92F00711AEA</string>
 										<key>history</key>
 										<array>
-											<string>223BFD4E0E48DA8B001D4BBF</string>
+											<string>22958A8A0E48F92F00711AEA</string>
+											<string>229589BC0E48EB4300711AEA</string>
+										</array>
+										<key>prevStack</key>
+										<array>
+											<string>229589BE0E48EB4300711AEA</string>
+											<string>22958A8B0E48F92F00711AEA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -420,9 +425,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>223ED8ED0E48DDFA00EFFF1F</string>
+				<string>2295893C0E48E13600711AEA</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>223ED8EE0E48DDFA00EFFF1F</string>
+				<string>2295893D0E48E13600711AEA</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -556,7 +561,8 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>223BFD3C0E48D84D001D4BBF</string>
+		<string>22958A000E48F02100711AEA</string>
+		<string>223534480E48A869007BA9B1</string>
 		<string>/Users/zimu/Documents/Shared/Projects/drcom4mac/trunk/kext/drcom.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
@@ -639,7 +645,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>223534480E48A869007BA9B1</string>
-				<string>223BFD1A0E48D417001D4BBF</string>
+				<string>2295893F0E48E13600711AEA</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
