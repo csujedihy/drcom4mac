@@ -1,0 +1,21 @@
+drcomsuite
+Version 0.0
+
+OVERVIEW
+
+drcomsuite is a collection of programs for getting online with an ISP that
+uses the Dr.COM 2133 Broadband Remote Access Server for its billing/access
+system.
+
+COPYRIGHT
+
+Copyright (C) 2005 William Poetra Yoga Hadisoeseno <williampoetra@yahoo.com>
+
+LICENSE
+
+The whole drcomsuite package is licensed under the GPL. This means that
+any distributed modification to any part of this package has to be released
+under the GPL.
+
+Please read the file COPYING for the full license.
+
