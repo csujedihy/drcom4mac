@@ -28,9 +28,7 @@
 #define CONTROLLER_FILTER_HANDLE	0x7e23673d
 
 // Global variables without lock protection
-static bool g_controller_filter_registered = false;
-static bool	g_controller_unreg_started = false;
-static bool	g_controller_unreg_completed = false;
+static kern_ctl_ref g_drcom_ctl_ref = NULL;
 
 static bool g_drcom_tcp_filter_registered = false;
 static bool	g_drcom_tcp_unreg_started = false;
@@ -145,7 +143,7 @@ init_lock_grp(void)
 	lck_grp_attr_t * lock_grp_attr = lck_grp_attr_alloc_init();
 	if (NULL == lock_grp_attr)
 	{
-		dprintf("lck_grp_attr_alloc_init() failed.");
+		dprintf("lck_grp_attr_alloc_init() failed");
 		result = ENOMEM;
 		goto out;
 	}
@@ -153,7 +151,7 @@ init_lock_grp(void)
 	g_lock_grp = lck_grp_alloc_init("drcom", lock_grp_attr);
 	if (NULL == g_lock_grp)
 	{
-		dprintf("lck_grp_alloc_init() failed.");
+		dprintf("lck_grp_alloc_init() failed");
 		result = ENOMEM;
 		goto out;
 	}
@@ -187,7 +185,7 @@ alloc_lock(lck_rw_t ** lock_ptr)
 	lock_attr = lck_attr_alloc_init();
 	if (NULL == lock_attr)
 	{
-		dprintf("lck_attr_alloc_init() failed.");
+		dprintf("lck_attr_alloc_init() failed");
 		result = ENOMEM;
 		goto out;
 	}
@@ -195,7 +193,7 @@ alloc_lock(lck_rw_t ** lock_ptr)
 	*lock_ptr = lck_rw_alloc_init(g_lock_grp, lock_attr);
 	if (NULL == *lock_ptr)
 	{
-		dprintf("lck_rw_alloc_init() failed.");
+		dprintf("lck_rw_alloc_init() failed");
 		result = ENOMEM;
 		goto out;
 	}
@@ -226,20 +224,20 @@ init_locks()
 	retval = init_lock_grp();
 	if (retval)
 	{
-		dprintf("init_lock_grp() failed");
+		dprintf("init_lock_grp() failed (errno=%d)", retval);
 		return retval;
 	}
 	
 	retval = alloc_lock(&g_auth_mode_lock);
 	if (retval)
 	{
-		dprintf("alloc_lock() failed");
+		dprintf("alloc_lock() failed (errno=%d)", retval);
 		return retval;
 	}	
 	retval = alloc_lock(&g_params_lock);
 	if (retval)
 	{
-		dprintf("alloc_lock() failed");
+		dprintf("alloc_lock() failed (errno=%d)", retval);
 		return retval;
 	}	
 	
@@ -349,7 +347,7 @@ drcom_tcp_attach_func(void ** cookie, socket_t so)
 	*cookie = _MALLOC(sizeof(drcom_cookie_t), M_TEMP, M_WAITOK | M_ZERO);
 	if (NULL == *cookie)
 	{
-		dprintf("_MALLOC() failed.");
+		dprintf("_MALLOC() failed");
 		return ENOMEM;
 	}
 	
@@ -530,7 +528,7 @@ drcom_tcp_data_out_func(
 	retval = mbuf_allocpacket(MBUF_WAITOK, DRCOM_AUTH_DATA_LEN, 0, &auth_data);
 	if (retval)
 	{
-		dprintf("mbuf_allocpacket() failed.");
+		dprintf("mbuf_allocpacket() failed (errno=%d)", retval);
 		goto fail;
 	}
 	 
@@ -538,7 +536,7 @@ drcom_tcp_data_out_func(
 	retval = mbuf_copyback(auth_data, 0, DRCOM_AUTH_DATA_LEN, g_auth_data, MBUF_WAITOK);
 	if (retval)
 	{
-		dprintf("mbuf_copyback() failed.");
+		dprintf("mbuf_copyback() failed (errno=%d)", retval);
 		goto fail;
 	}
 	
@@ -574,7 +572,7 @@ drcom_tcp_data_out_func(
 	// Now we can check the return value.
 	if (retval)
 	{
-		dprintf("sock_inject_data_out() failed.");
+		dprintf("sock_inject_data_out() failed (errno=%d)", retval);
 	}
 	else
 	{
@@ -594,7 +592,7 @@ fail:
 }
 
 /* Dispatch vector for drcom TCP filter */
-static struct sflt_filter drcom_tcp_filter = {
+const static struct sflt_filter drcom_tcp_filter = {
 	DRCOM_TCP_FILTER_HANDLE,	/* sflt_handle */
 	SFLT_GLOBAL,				/* sf_flags */
 	MYBUNDLEID,					/* sf_name - cannot be nil else param err results */
@@ -645,7 +643,7 @@ install_drcom_tcp_filter()
 		}		
 		else
 		{
-			dprintf("sflt_register(drcom_tcp_filter) failed");
+			dprintf("sflt_register(drcom_tcp_filter) failed (errno=%d)", retval);
 			return retval;
 		}	
 	}
@@ -670,7 +668,7 @@ uninstall_drcom_tcp_filter()
 		retval = sflt_unregister(DRCOM_TCP_FILTER_HANDLE);
 		if (retval)
 		{
-			dprintf( "sflt_unregister(DRCOM_TCP_FILTER_HANDLE) failed.");
+			dprintf( "sflt_unregister(DRCOM_TCP_FILTER_HANDLE) failed (errno=%d)", retval);
 			return retval;
 		}
 		else
@@ -805,7 +803,7 @@ drcom_udp_data_out_func(
 }
 
 /* Dispatch vector for drcom UDP filter */
-static struct sflt_filter drcom_udp_filter = {
+const static struct sflt_filter drcom_udp_filter = {
 	DRCOM_UDP_FILTER_HANDLE,	/* sflt_handle */
 	SFLT_GLOBAL,				/* sf_flags */
 	MYBUNDLEID,					/* sf_name - cannot be nil else param err results */
@@ -856,7 +854,7 @@ install_drcom_udp_filter()
 		}		
 		else
 		{
-			dprintf("sflt_register(drcom_udp_filter) failed");
+			dprintf("sflt_register(drcom_udp_filter) failed (errno=%d)", retval);
 			return retval;
 		}	
 	}
@@ -881,7 +879,7 @@ uninstall_drcom_udp_filter()
 		retval = sflt_unregister(DRCOM_UDP_FILTER_HANDLE);
 		if (retval)
 		{
-			dprintf( "sflt_unregister(DRCOM_UDP_FILTER_HANDLE) failed.");
+			dprintf( "sflt_unregister(DRCOM_UDP_FILTER_HANDLE) failed (errno=%d)", retval);
 			return retval;
 		}
 		else
@@ -911,14 +909,14 @@ install_drcom_filters(void)
 	retval = install_drcom_udp_filter();
 	if (retval)
 	{
-		dprintf("install_drcom_udp_filter() failed.");
+		dprintf("install_drcom_udp_filter() failed (errno=%d)", retval);
 		return retval;
 	}
 	
 	retval = install_drcom_tcp_filter();
 	if (retval)
 	{
-		dprintf("install_drcom_tcp_filter() failed.");
+		dprintf("install_drcom_tcp_filter() failed (errno=%d)", retval);
 		return retval;		
 	}
 	
@@ -933,14 +931,14 @@ uninstall_drcom_filters(void)
 	retval = uninstall_drcom_udp_filter();
 	if (retval)
 	{
-		dprintf("uninstall_drcom_udp_filter() failed.");
+		dprintf("uninstall_drcom_udp_filter() failed (errno=%d)", retval);
 		return retval;
 	}
 	
 	retval = uninstall_drcom_tcp_filter();
 	if (retval)
 	{
-		dprintf("uninstall_drcom_tcp_filter() failed.");
+		dprintf("uninstall_drcom_tcp_filter() failed (errno=%d)", retval);
 		return retval;		
 	}
 	
@@ -948,123 +946,85 @@ uninstall_drcom_filters(void)
 }
 
 static errno_t
-handle_cmd_set_params(const sockopt_t opt)
+handle_cmd_set_params(const void * data, size_t data_len)
 {
 	dprintf("handle_cmd_set_params() has been triggered.");
 	
-	errno_t result = 0;
-	
-	u_int8_t * buf = NULL;
-	size_t buf_len = sockopt_valsize(opt);
 	struct drcom_set_params_opt * set_params_opt_ptr = NULL;
 	u_int8_t * tmp_exclude_list = NULL;
 	
-	// Verify the length of optval
-	if (buf_len < sizeof(struct drcom_set_params_opt))
+	// Verify the length of data
+	if (NULL == data || data_len < sizeof(struct drcom_set_params_opt))
 	{
 		dprintf("Invalid parameter for DRCOM_SO_SET_PARAMS");
-		result = EINVAL;
-		goto out;
+		return EINVAL;
 	}
-	
-	// Allocate memory to receive optval
-	buf = _MALLOC(buf_len, M_TEMP, M_WAITOK | M_ZERO);
-	if (buf == NULL)
-	{
-		dprintf("_MALLOC() failed.");
-		result = ENOMEM;
-		goto out;
-	}	
-	
-	// Copy all of optval to buffer
-	errno_t retval;
-	retval = sockopt_copyin(opt, buf, buf_len);
-	if (retval)
-	{
-		dprintf("sockopt_copyout() failed.");
-		result = retval;
-		goto out;
-	}
-	
-	set_params_opt_ptr = (struct drcom_set_params_opt *) buf;
+		
+	set_params_opt_ptr = (struct drcom_set_params_opt *) data;
 	dprintf("Extracting %d entries to exclude list.", set_params_opt_ptr->exclude_count);
 	
 	if (set_params_opt_ptr->exclude_count > 0)
 	{
 		// Verify the length of header plus exclude list
-		size_t len = set_params_opt_ptr->exclude_count * sizeof(struct exclude_entry);				
-		if (buf_len < (sizeof(struct drcom_set_params_opt) + len))
+		size_t list_len = set_params_opt_ptr->exclude_count * sizeof(struct exclude_entry);				
+		if (data_len < (sizeof(struct drcom_set_params_opt) + list_len))
 		{
 			dprintf("Invalid parameter for DRCOM_SO_SET_PARAMS");
-			result = EINVAL;
-			goto out;
+			return EINVAL;
 		}
 		
 		// Allocate membory to store exclude list
-		tmp_exclude_list = _MALLOC(len, M_TEMP, M_WAITOK | M_ZERO);
+		tmp_exclude_list = _MALLOC(list_len, M_TEMP, M_WAITOK | M_ZERO);
 		if (tmp_exclude_list == NULL)
 		{
-			dprintf("_MALLOC() failed.");
-			result = ENOMEM;
-			goto out;
+			dprintf("_MALLOC() failed");
+			return ENOMEM;
 		}		
 		
 		// Fill exlucde list without header
-		memcpy(tmp_exclude_list, buf + sizeof(struct drcom_set_params_opt), len);
+		memcpy(tmp_exclude_list, data + sizeof(struct drcom_set_params_opt), list_len);
 	}
 	
-	lck_rw_lock_exclusive(g_params_lock);
-	
 	// Update the global exclude list
+	lck_rw_lock_exclusive(g_params_lock);
 	g_exclude_num = set_params_opt_ptr->exclude_count;
 	if (g_exclude_list)
 		_FREE(g_exclude_list, M_TEMP);
-	g_exclude_list = (struct exclude_entry *) tmp_exclude_list;
-	
+	g_exclude_list = (struct exclude_entry *) tmp_exclude_list;	
 	lck_rw_unlock_exclusive(g_params_lock);
 	
 	dprintf("Exclude list has been updated.");
 	
-out:
-	if (buf)
-		_FREE(buf, M_TEMP);
-	
-	return result;
+	return 0;
 }
 
 static errno_t
-handle_cmd_set_auth(const sockopt_t opt)
+handle_cmd_set_auth(const void * data, size_t data_len)
 {
+	errno_t result = 0;
+	errno_t retval;
+	
 	dprintf("handle_cmd_set_auth() has been triggered.");
 	
-	struct drcom_set_auth_opt set_auth_opt;
+	struct drcom_set_auth_opt * set_auth_opt_ptr;
 	
 	// Verify the length of optval
-	if (sockopt_valsize(opt) < sizeof(set_auth_opt))
+	if (NULL == data || data_len < sizeof(struct drcom_set_auth_opt))
 	{
 		dprintf("Invalid parameter for DRCOM_SO_SET_AUTH");
 		return EINVAL;
 	}
 	
-	// Copy the header first
-	errno_t retval;
-	retval = sockopt_copyin(opt, &set_auth_opt, sizeof(set_auth_opt));
-	if (retval)
-	{
-		dprintf("sockopt_copyout() failed.");
-		return retval;
-	}
-	
-	errno_t result = 0;
-	
+	set_auth_opt_ptr = (struct drcom_set_auth_opt *) data;
+
 	lck_rw_lock_exclusive(g_auth_mode_lock);
 	
-	if (g_auth_mode == set_auth_opt.cmd)
+	if (g_auth_mode == set_auth_opt_ptr->cmd)
 	{
 		goto unlock;
 	}
 	
-	switch (set_auth_opt.cmd) {
+	switch (set_auth_opt_ptr->cmd) {
 		case DRCOM_AUTH_MODE_ON:
 			dprintf("DRCOM_AUTH_MODE_ON is received.");
 			
@@ -1074,19 +1034,19 @@ handle_cmd_set_auth(const sockopt_t opt)
 			retval = install_drcom_filters();
 			if (retval)
 			{
-				dprintf("install_drcom_filters() failed.");
+				dprintf("install_drcom_filters() failed (errno=%d)", retval);
 				result = retval;
 				goto unlock;
 			}
-			if (set_auth_opt.autologout)
+			if (set_auth_opt_ptr->autologout)
 			{
 				install_autologout_timer();
 			}
 			
-			g_auth_mode = set_auth_opt.cmd;
-			g_pid = set_auth_opt.pid;
-			g_autologout = set_auth_opt.autologout;
-			memcpy(g_auth_data, set_auth_opt.auth_data, DRCOM_AUTH_DATA_LEN);
+			g_auth_mode = set_auth_opt_ptr->cmd;
+			g_pid = set_auth_opt_ptr->pid;
+			g_autologout = set_auth_opt_ptr->autologout;
+			memcpy(g_auth_data, set_auth_opt_ptr->auth_data, DRCOM_AUTH_DATA_LEN);
 			
 			dprintf("Authentication mode is turned ON.");
 			break;
@@ -1099,13 +1059,13 @@ handle_cmd_set_auth(const sockopt_t opt)
 			retval = uninstall_drcom_filters();
 			if (retval)
 			{
-				dprintf("uninstall_drcom_filters() failed.");
+				dprintf("uninstall_drcom_filters() failed (errno=%d)", retval);
 				result = retval;
 				goto unlock;
 			}
 			uninstall_autologout_timer();
 			
-			g_auth_mode = set_auth_opt.cmd;
+			g_auth_mode = set_auth_opt_ptr->cmd;
 			g_pid = 0;
 			g_autologout = false;
 			memset(g_auth_data, 0, DRCOM_AUTH_DATA_LEN);
@@ -1123,73 +1083,6 @@ unlock:
 	return result;
 }
 
-static void
-controller_unregistered_func(sflt_handle handle)
-{
-	assert(CONTROLLER_FILTER_HANDLE == handle);
-	g_controller_unreg_completed = true;
-	g_controller_filter_registered = false;
-	dprintf("Controller filter has been unregistered.");
-}
-
-static errno_t
-controller_attach_func(void ** cookie, socket_t so)
-{
-	// Attach to all UDP sockets.
-	return 0;
-}
-
-static void
-controller_detach_func(void * cookie, socket_t so)
-{
-	// Do nothing here.
-}
-
-static errno_t
-controller_setopt_func(void * cookie, socket_t so, sockopt_t opt)
-{	
-	assert(sockopt_direction(opt) == SOPT_SET);
-	assert(sockopt_level(opt) == IPPROTO_UDP);
-	switch (sockopt_name(opt))
-	{
-		case DRCOM_SO_SET_PARAMS:
-			return handle_cmd_set_params(opt);
-		
-		case DRCOM_SO_SET_AUTH:
-			return handle_cmd_set_auth(opt);
-			
-		default:
-			return 0;
-	}
-	
-	// FIXME: If DRCOM_SO_SET_AUTH or DRCOM_SO_SET_PARAMS is done, user will
-	// receive error code 42 "Protocol not available". I haven't figured out
-	// how to fix this until now; so take errno = 42 as SUCCESS.
-	return 0;	
-}
-
-/* Dispatch vector for controller filter */
-static struct sflt_filter controller_filter = {
-	CONTROLLER_FILTER_HANDLE,		/* sflt_handle */
-	SFLT_GLOBAL,					/* sf_flags */
-	MYBUNDLEID,						/* sf_name - cannot be nil else param err results */
-	controller_unregistered_func,	/* sf_unregistered_func */
-	controller_attach_func,			/* sf_attach_func - cannot be nil else param err results */			
-	controller_detach_func,			/* sf_detach_func - cannot be nil else param err results */
-	NULL,							/* sf_notify_func */
-	NULL,							/* sf_getpeername_func */
-	NULL,							/* sf_getsockname_func */
-	NULL,							/* sf_data_in_func */
-	NULL,							/* sf_data_out_func */
-	NULL,							/* sf_connect_in_func */
-	NULL,							/* sf_connect_out_func */
-	NULL,							/* sf_bind_func */
-	controller_setopt_func,			/* sf_setoption_func */
-	NULL,							/* sf_getoption_func */
-	NULL,							/* sf_listen_func */
-	NULL							/* sf_ioctl_func */
-};
-
 static errno_t
 drcom_ctl_setopt_func(
     kern_ctl_ref kctlref,
@@ -1199,9 +1092,24 @@ drcom_ctl_setopt_func(
     void * data,
     size_t len)	
 {
-	return 0;
+	switch (opt)
+	{
+		case DRCOM_SO_SET_PARAMS:
+			return handle_cmd_set_params(data, len);
+		
+		case DRCOM_SO_SET_AUTH:
+			return handle_cmd_set_auth(data, len);
+			
+		default:
+			return EINVAL;
+	}
+	
+	return EINVAL;	
 }
 
+// Data structure to register a system control
+// This is not a const structure since the ctl_id field will be set
+// when the ctl_register call succeeds
 static struct kern_ctl_reg drcom_ctl_reg = {
 	MYBUNDLEID,				/* use a reverse dns name which includes a name unique to your comany */
 	0,						/* set to 0 for dynamically assigned control ID - CTL_FLAG_REG_ID_UNIT not set */
@@ -1221,31 +1129,21 @@ install_controller_filter()
 {
 	errno_t retval;
 	
-	if (g_controller_filter_registered)
+	if (g_drcom_ctl_ref)
 	{
-		dprintf("Oops, controller filter has been installed.");
+		dprintf("Oops, drcom controller has been installed.");
 		return 0;		
 	}
 	
-	if (g_controller_unreg_started && !g_controller_unreg_completed)
-	{
-		dprintf("Oops, controller filter is being uninstalled; try again!");
-		return EAGAIN;		
+	// register our control structure so that we can be found by a user level process.
+	retval = ctl_register(&drcom_ctl_reg, &g_drcom_ctl_ref);
+	if (retval == 0) {
+		dprintf("Controller filter has been registered (id=0x%x, ref=0x%x)", drcom_ctl_reg.ctl_id, g_drcom_ctl_ref);
 	}
-	
-	// Register controller filter with PF_INET domain, SOCK_DGRAM type, UDP protocol
-	retval = sflt_register(&controller_filter, PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (retval == 0)
-	{
-		dprintf("Controller filter has been registered");
-		g_controller_filter_registered = true;
-		g_controller_unreg_started = false;
-		g_controller_unreg_completed = false;
-	}		
 	else
 	{
-		dprintf("sflt_register() failed");
-	}
+		dprintf("ctl_register failed (errno=%d)", retval);
+	}	
 	
 	return retval;
 }
@@ -1253,37 +1151,25 @@ install_controller_filter()
 static errno_t
 uninstall_controller_filter()
 {
-	errno_t retval;
+	errno_t retval = 0;
 	
-	if (!g_controller_filter_registered)
+	if (g_drcom_ctl_ref)
 	{
-		dprintf("Oops, controller filter hasn't been installed yet.");
-		return 0;		
-	}
-	
-	if (!g_controller_unreg_started)
-	{
-		// start the unregistration process
-		retval = sflt_unregister(CONTROLLER_FILTER_HANDLE);
+		retval = ctl_deregister(g_drcom_ctl_ref);
 		if (retval)
 		{
-			dprintf( "sflt_unregister(CONTROLLER_FILTER_HANDLE) failed.");
-			return retval;
+			dprintf("ctl_deregister() failed (errno=%d)", retval);
 		}
 		else
 		{
-			// Indicate that we've started the unreg process.
-			g_controller_unreg_started = true;
-		}		
+			g_drcom_ctl_ref = NULL;
+		}
 	}
-	
-	if (!g_controller_unreg_completed)
+	else
 	{
-		dprintf("Controller filter is being unregistered.");
-		return EINPROGRESS;
+		dprintf("Oops, drcom controller hasn't been registered yet.");
 	}
-	
-	return 0;	
+	return retval;
 }
 
 /* =================================== */
@@ -1296,14 +1182,14 @@ kern_return_t drcom_start(kmod_info_t * ki, void * d)
 	retval = init_locks();	
 	if (retval)
 	{
-		dprintf("init_locks() failed");
+		dprintf("init_locks() failed (errno=%d)", retval);
 		return KERN_RESOURCE_SHORTAGE;
 	}		
 	
 	retval = install_controller_filter();
 	if (retval)
 	{
-		dprintf("install_controller_filter() failed");
+		dprintf("install_controller_filter() failed (errno=%d)", retval);
 		goto fail;
 	}
 	
@@ -1332,14 +1218,14 @@ drcom_stop (kmod_info_t * ki, void * d)
 	retval = uninstall_drcom_filters();
 	if (retval)
 	{
-		dprintf("uninstall_drcom_filter() failed.");
+		dprintf("uninstall_drcom_filter() failed (errno=%d)", retval);
 		return KERN_FAILURE;		
 	}		
 	
 	retval = uninstall_controller_filter();
 	if (retval)
 	{
-		dprintf("uninstall_controller_filter() failed.");
+		dprintf("uninstall_controller_filter() failed (errno=%d)", retval);
 		return KERN_FAILURE;		
 	}
 
