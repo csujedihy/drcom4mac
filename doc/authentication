@@ -1,0 +1,23 @@
+struct drcom_auth
+
+For every UDP packet and every TCP connection, with the other end outside the
+ISP network, we add authentication data.
+
+For UDP, the packet is prepended with this 16 byte data.
+
+For TCP, the first outgoing packet of every connection is preceded with this
+16 byte data.
+
+struct drcom_auth
+{
+  char drco[4];
+  u_int32_t servip;
+  u_int16_t servport;
+  u_int32_t hostip;
+  u_int16_t hostport;
+}  __attribute__ ((__packed__));
+
+drco is "Drco".
+
+the names servip, servport, hostip, hostport are just my inventions.
+

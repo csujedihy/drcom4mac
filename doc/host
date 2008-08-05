@@ -1,0 +1,21 @@
+This struct is found in login packet.
+
+struct drcom_host
+{
+  char hostname[32];
+  u_int32_t dns[2];
+  u_int32_t dhcp;
+  u_int32_t unknown0;
+  u_int32_t winver_major;
+  u_int32_t winver_minor;
+  u_int32_t winver_build;
+  u_int32_t unknown1;
+  char servicepack[32];
+} __attribute__ ((__packed__));
+
+unknown0 is LSB 0x94.
+
+unknown1 is LSB 0x02.
+
+winver_major, winver_minor, winver_build are LSB.
+

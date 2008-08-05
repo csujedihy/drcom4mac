@@ -1,0 +1,18 @@
+36 bytes
+
+Every 10 seconds, we send a keepalive packet to the server.
+
+struct drcom_host_msg
+{
+  u_int8_t msgtype;
+  u_int8_t msg[19];
+  struct drcom_auth auth_info;
+} __attribute__ ((__packed__));
+
+msgtype is 0xff.
+
+The first 16 bytes of msg is checksum0 of drcom_login_packet.
+The rest of msg is NULL.
+
+auth_info is obtained in acknowledgement in the login process.
+

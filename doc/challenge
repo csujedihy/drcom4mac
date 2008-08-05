@@ -1,0 +1,20 @@
+8 bytes
+
+This challenge packet is sent by the server whenever
+it receives request from a host.
+
+The weird thing is, Ethereal sniffs a trailing garbage
+(8 bytes) with this packet.
+
+struct drcom_challenge
+{
+  struct drcom_serv_header serv_header;
+  u_int32_t challenge;
+} __attribute__ ((__packed__));
+
+pkt_type is 02 00.
+
+len is 8.
+
+challenge is challenge value.
+
