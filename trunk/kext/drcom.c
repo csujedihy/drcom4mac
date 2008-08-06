@@ -1195,6 +1195,7 @@ uninstall_drcom_controller()
 		else
 		{
 			g_drcom_ctl_ref = NULL;
+			dprintf("Drcom controller has been unregistered.");
 		}
 	}
 	else
