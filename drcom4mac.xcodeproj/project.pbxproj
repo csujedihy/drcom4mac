@@ -35,7 +35,7 @@
 		226A4E130E490244005F3ED6 /* drcomd.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = drcomd.c; sourceTree = "<group>"; };
 		226A4E140E490244005F3ED6 /* drcomd.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = drcomd.h; sourceTree = "<group>"; };
 		226A4E150E490244005F3ED6 /* keepalive.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = keepalive.c; sourceTree = "<group>"; };
-		226A4E160E490244005F3ED6 /* kmodule.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = kmodule.c; sourceTree = "<group>"; };
+		226A4E160E490244005F3ED6 /* kmodule.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = kmodule.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		226A4E170E490244005F3ED6 /* log.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
 		226A4E180E490244005F3ED6 /* log.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
 		226A4E190E490244005F3ED6 /* login.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = login.c; sourceTree = "<group>"; };
@@ -403,6 +403,9 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = kext/Info.plist;
+				INSTALL_GROUP = wheel;
+				INSTALL_MODE_FLAG = "u+w,go-w,a+rX";
+				INSTALL_OWNER = root;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Extensions";
 				MODULE_NAME = edu.toronto.eecg.kext.drcom;
 				MODULE_START = drcom_start;
@@ -453,11 +456,18 @@
 		226A4E8B0E490495005F3ED6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = "$(HOME)/bin";
+				INSTALL_GROUP = wheel;
+				INSTALL_MODE_FLAG = "a-w,a+r,go-X,u+X";
+				INSTALL_OWNER = root;
+				INSTALL_PATH = /usr/local/bin;
 				PREBINDING = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = include;
 				PRODUCT_NAME = drcomd;
@@ -485,11 +495,17 @@
 		226A52A80E49092A005F3ED6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = "$(HOME)/bin";
+				INSTALL_GROUP = wheel;
+				INSTALL_OWNER = root;
+				INSTALL_PATH = /usr/local/bin;
 				PREBINDING = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = include;
 				PRODUCT_NAME = drcomc;
