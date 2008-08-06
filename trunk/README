@@ -2,59 +2,24 @@
 				README
 				------
 
-Note: this file is encoded in UTF-8
-      any comments please goto wheelz at <kernel.zeng@gmail.com>
-
-
-重要变化：
-=========
-
-
-注意：在新的/etc/drcom.conf中，正确填写
-
-	except=
-
-很重要!!!  这里必须把所有不需要验证的网址(也就是所有内网范围)列出来。格式见下面的解释。
-
-
+Note: This file is encoded in UTF-8
+      Please goto http://code.google.com/p/drcom4mac/ to report bugs
+      or leave comments. Thanks!
 
 配置文件：
 =========
 
-从1.4.0开始，/etc/drcom.conf的内容有所变化，增加了device和except两个配置选项，
-mac和nic0选项也不再需要填写。
-
-device指明通往外网的网卡的名字。
-except指明不需要进行用户验证的网络地址（用“网络地址/网络掩码”的形式，用逗号隔开），
-通常，except应该列出内网的地址。
-
-如下例：
-device=eth0
-except=10.0.0.0/255.0.0.0, 192.168.0.0/255.255.0.0, 172.16.0.0/255.240.0.0, 127.0.0.0/255.0.0.0
-
-
+请阅读README.Linux了解如何配置drcom.conf
 
 概述：
 =====
 
-在本程序的1.3.x版本中，我们使用security_ops来截获socket创建的机制，
-来为每个TCP/UDP连接加入验证服务器需要的验证信息。
-但是，Linux内核从2.6.24开始，不再EXPORT_SYMBOL(security_ops)，
-因此，我们就不再能够使用这种方法。
+本程序使用Mac OS X 10.4 Tiger引入的NKE接口，为每个TCP/UDP连接加入验证服务器需要的验证信息。
 
-从1.4.x开始，我们转而采用netfilter hooks。
-一方面，这个做法避免了以后依赖于内核EXPORT_SYMBOL的困境，
-另一方面，这个做法带来了另外的好处，就是可以使用NAT/Masquerade来共享上网。
+本程序基于zrzeng等人编写的drcom-client－1.4.7，用户态的程序drcomd和drcomc基本没有修改，内核的部分已经为Mac OS X完全重写。
 
-本程序基于William Poetra Yoga Hadisoeseno写的drcomsuite-0.1.12以及
-libdrcom-0.0-20050423-2，内核的部分已经完全重写，用户态的程序drcomd和drcomc
-也经过了大幅的修改。未来的工作应该主要在于用户态程序的清理，包括整个程序的
-framework。
-
-请注意，本程序现在已经不依赖于drcomsuite和libdrcom，
-也就是说，您不需要下载drcomsuite和libdrcom这两个包。
-
-请参考README-old来获取有关drcom的信息。
+请参考README.Linux来获取有关drcom-client的信息。
+请参考README.old来获取有关drcom的信息。
 请参考THANKS来感谢曾经为drcom作出过贡献的人们。
 
 本程序版权采用GPL v2，请参考COPYING。
@@ -64,13 +29,9 @@ framework。
 编译和安装：
 ===========
 
-$ tar xzvf drcom-x.x.x.tar.gz
-$ cd drcom-x.x.x
-$ make
-$ sudo make install
+svn checkout http://drcom4mac.googlecode.com/svn/trunk/ drcom4mac-read-only
 
-然后，您可能需要编辑一下/etc/drcom.conf
-
+使用XCode编译drcom4mac
 
 
 使用：
@@ -78,6 +39,7 @@ $ sudo make install
 
 1) 启动drcomd
 
+$ sudo kextload drcom.kext
 $ sudo drcomd
 
 2) 登录

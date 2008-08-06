@@ -6,6 +6,22 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		22A1BC010E49285D003C7C07 /* drcom4mac */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 22A1BC0F0E492878003C7C07 /* Build configuration list for PBXAggregateTarget "drcom4mac" */;
+			buildPhases = (
+			);
+			dependencies = (
+				22A1BC070E492869003C7C07 /* PBXTargetDependency */,
+				22A1BC050E492866003C7C07 /* PBXTargetDependency */,
+				22A1BC030E492865003C7C07 /* PBXTargetDependency */,
+			);
+			name = drcom4mac;
+			productName = drcom4mac;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		226A4E2D0E490255005F3ED6 /* drcom.c in Sources */ = {isa = PBXBuildFile; fileRef = 226A4E280E490244005F3ED6 /* drcom.c */; };
 		226A4E630E490365005F3ED6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 226A4E600E490365005F3ED6 /* InfoPlist.strings */; };
@@ -28,6 +44,30 @@
 		226A52A00E49090A005F3ED6 /* drcomc.c in Sources */ = {isa = PBXBuildFile; fileRef = 226A4E100E490244005F3ED6 /* drcomc.c */; };
 		226A52A10E49090C005F3ED6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 226A4E2A0E490244005F3ED6 /* utils.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22A1BC020E492865003C7C07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 226A529D0E4908F2005F3ED6 /* drcomc */;
+			remoteInfo = drcomc;
+		};
+		22A1BC040E492866003C7C07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 226A4E860E490476005F3ED6 /* drcomd */;
+			remoteInfo = drcomd;
+		};
+		22A1BC060E492869003C7C07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 32A4FEB80562C75700D090E7 /* drcom */;
+			remoteInfo = drcom;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		226A4E100E490244005F3ED6 /* drcomc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = drcomc.c; sourceTree = "<group>"; };
@@ -294,6 +334,7 @@
 				32A4FEB80562C75700D090E7 /* drcom */,
 				226A4E860E490476005F3ED6 /* drcomd */,
 				226A529D0E4908F2005F3ED6 /* drcomc */,
+				22A1BC010E49285D003C7C07 /* drcom4mac */,
 			);
 		};
 /* End PBXProject section */
@@ -360,6 +401,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		22A1BC030E492865003C7C07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 226A529D0E4908F2005F3ED6 /* drcomc */;
+			targetProxy = 22A1BC020E492865003C7C07 /* PBXContainerItemProxy */;
+		};
+		22A1BC050E492866003C7C07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 226A4E860E490476005F3ED6 /* drcomd */;
+			targetProxy = 22A1BC040E492866003C7C07 /* PBXContainerItemProxy */;
+		};
+		22A1BC070E492869003C7C07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 32A4FEB80562C75700D090E7 /* drcom */;
+			targetProxy = 22A1BC060E492869003C7C07 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		226A4E600E490365005F3ED6 /* InfoPlist.strings */ = {
@@ -513,6 +572,28 @@
 			};
 			name = Release;
 		};
+		22A1BC100E492878003C7C07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = drcom4mac;
+			};
+			name = Debug;
+		};
+		22A1BC110E492878003C7C07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = drcom4mac;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -548,6 +629,15 @@
 			buildConfigurations = (
 				226A52A70E49092A005F3ED6 /* Debug */,
 				226A52A80E49092A005F3ED6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22A1BC0F0E492878003C7C07 /* Build configuration list for PBXAggregateTarget "drcom4mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22A1BC100E492878003C7C07 /* Debug */,
+				22A1BC110E492878003C7C07 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
