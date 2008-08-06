@@ -142,11 +142,11 @@ is_excluded(const struct sockaddr_in * sockaddr)
 			if ((g_exclude_list[i].mask & ip) == g_exclude_list[i].addr)
 			{
 				lck_rw_unlock_shared(g_params_lock);
-				return !true;			
+				return true;			
 			}
 	}
 	lck_rw_unlock_shared(g_params_lock);	
-	return !false;	
+	return false;
 }
 
 /* =================================== */
@@ -478,6 +478,9 @@ drcom_tcp_data_out_func(
 	mbuf_t * control,
 	sflt_data_flag_t flags)
 {
+	if (NULL == data)
+		return 0;
+
 	// Check authentication mode
 	lck_rw_lock_shared(g_auth_mode_lock);
 	if (g_auth_mode == DRCOM_AUTH_MODE_OFF)
@@ -709,7 +712,7 @@ uninstall_drcom_tcp_filter()
 }
 
 /* =================================== */
-#pragma mark Drcom UDP filter (traffic monitor)
+#pragma mark Drcom UDP filter (authentication + traffic monitor)
 
 static void
 drcom_udp_unregistered_func(sflt_handle handle)
@@ -792,7 +795,7 @@ drcom_udp_data_out_func(
 	mbuf_t * control,
 	sflt_data_flag_t flags)
 {
-	if (NULL == to)
+	if (NULL == to || NULL == data)
 		return 0;
 		
 	// Check authentication mode
@@ -818,6 +821,20 @@ drcom_udp_data_out_func(
 		g_active = true;
 		
 		dprintf("drcom_udp_data_out_func() is triggered in monitored socket (so=0x%x)", so);
+		
+		errno_t retval;
+		retval = mbuf_prepend(data, DRCOM_AUTH_DATA_LEN, MBUF_WAITOK);
+		if (retval)
+		{
+			dprintf("mbuf_prepend() failed (errno=%d)", retval);
+			return retval;
+		}
+		retval = mbuf_copyback(*data, 0, DRCOM_AUTH_DATA_LEN, g_auth_data, MBUF_WAITOK);
+		if (retval)
+		{
+			dprintf("mbuf_copyback() failed (errno=%d)", retval);
+			return retval;
+		}		
 	}
 	
 	return 0;
