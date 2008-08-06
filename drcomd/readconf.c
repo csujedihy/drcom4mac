@@ -369,7 +369,7 @@ int __parseopt(struct drcom_conf *conf, char *buf, struct _opt_checklist *opts)
 				goto err;
 			}
 			strncpy(ifr.ifr_name, optval, IFNAMSIZ);
-			// FIXME: use mac compatible function here
+			// FIXME: use BSD-compatible function here
 			/*
 			r = ioctl(s, SIOCGIFHWADDR, &ifr);
 			if (r != 0) {
@@ -379,7 +379,7 @@ int __parseopt(struct drcom_conf *conf, char *buf, struct _opt_checklist *opts)
 			}
 			memcpy(conf->mac0, ifr.ifr_hwaddr.sa_data, 6);
 			*/
-			memset(conf->mac0, 0, 6);
+			memset(conf->mac0, 0xab, 6);
 			opts->mac0 = 1;
 
 			strncpy(ifr.ifr_name, optval, IFNAMSIZ);
