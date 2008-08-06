@@ -33,7 +33,7 @@
 
 #define DRCOM_AUTH_DATA_LEN		16
 
-#define DRCOM_AUTOLOGOUT_IDLE	(1 * 60) // in seconds
+#define DRCOM_AUTOLOGOUT_IDLE	(5 * 60) // in seconds
 
 struct exclude_entry
 {
