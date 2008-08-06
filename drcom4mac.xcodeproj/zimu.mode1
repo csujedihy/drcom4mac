@@ -220,6 +220,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -256,19 +258,16 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>089C166AFE841209C02AAC07</string>
-								<string>247142CAFF3F8F9811CA285C</string>
-								<string>226A4E110E490244005F3ED6</string>
 								<string>19C28FB6FE9D52B211CA2CBB</string>
 								<string>1C37FBAC04509CD000000102</string>
+								<string>22A1BC0A0E492878003C7C07</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>6</integer>
-									<integer>4</integer>
-									<integer>1</integer>
-									<integer>0</integer>
+									<integer>12</integer>
+									<integer>8</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -291,7 +290,7 @@
 							<real>344</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>69 173 1012 575 0 0 1440 878 </string>
+						<string>304 172 1012 575 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -319,7 +318,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>222979E60E49229100ACED2A</string>
+										<string>22A1BC130E4928C3003C7C07</string>
 										<key>history</key>
 										<array>
 											<string>226A4EA40E49052C005F3ED6</string>
@@ -334,7 +333,7 @@
 											<string>226A53410E490C5B005F3ED6</string>
 											<string>2289C67E0E491957007C6E37</string>
 											<string>2289C6970E491A32007C6E37</string>
-											<string>2289C6DB0E49220E007C6E37</string>
+											<string>222979E60E49229100ACED2A</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -363,7 +362,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {646, 159}}</string>
 								<key>RubberWindowFrame</key>
-								<string>69 173 1012 575 0 0 1440 878 </string>
+								<string>304 172 1012 575 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -371,8 +370,6 @@
 							<string>159pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -385,7 +382,7 @@
 								<key>Frame</key>
 								<string>{{0, 164}, {646, 370}}</string>
 								<key>RubberWindowFrame</key>
-								<string>69 173 1012 575 0 0 1440 878 </string>
+								<string>304 172 1012 575 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -409,9 +406,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>222979E70E49229100ACED2A</string>
+				<string>22A1BC0C0E492878003C7C07</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>222979E80E49229100ACED2A</string>
+				<string>22A1BC0D0E492878003C7C07</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -549,7 +546,7 @@
 		<string>/Users/zimu/Documents/Shared/Projects/drcom4mac/trunk/drcom4mac.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>69 173 1012 575 0 0 1440 878 </string>
+	<string>304 172 1012 575 0 0 1440 878 </string>
 	<key>WindowTools</key>
 	<array>
 		<dict>
@@ -626,7 +623,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>226A4E710E4903AA005F3ED6</string>
-				<string>222979E90E49229100ACED2A</string>
+				<string>22A1BC0E0E492878003C7C07</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

@@ -3,7 +3,7 @@
 	089C1669FE841209C02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Release;
 		activeExecutable = 226A529F0E4908F2005F3ED6 /* drcomc */;
-		activeTarget = 226A4E860E490476005F3ED6 /* drcomd */;
+		activeTarget = 22A1BC010E49285D003C7C07 /* drcom4mac */;
 		addToTargets = (
 		);
 		codeSenseManager = 22129FAC0E4901BB00361961 /* Code sense */;
@@ -56,8 +56,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 239673968;
-			PBXWorkspaceStateSaveDate = 239673968;
+			PBXPerProjectTemplateStateSaveDate = 239675453;
+			PBXWorkspaceStateSaveDate = 239675453;
 		};
 		perUserProjectItems = {
 			222979E60E49229100ACED2A /* PBXTextBookmark */ = 222979E60E49229100ACED2A /* PBXTextBookmark */;
@@ -85,7 +85,7 @@
 			2289C6800E491957007C6E37 /* PBXTextBookmark */ = 2289C6800E491957007C6E37 /* PBXTextBookmark */;
 			2289C6810E491957007C6E37 /* PBXTextBookmark */ = 2289C6810E491957007C6E37 /* PBXTextBookmark */;
 			2289C6970E491A32007C6E37 /* PBXTextBookmark */ = 2289C6970E491A32007C6E37 /* PBXTextBookmark */;
-			2289C6DB0E49220E007C6E37 /* PBXTextBookmark */ = 2289C6DB0E49220E007C6E37 /* PBXTextBookmark */;
+			22A1BC130E4928C3003C7C07 /* PBXTextBookmark */ = 22A1BC130E4928C3003C7C07 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 22129FAB0E4901BB00361961 /* Source Control */;
 		userBuildSettings = {
@@ -551,7 +551,10 @@
 		vrLen = 114;
 		vrLoc = 207;
 	};
-	2289C6DB0E49220E007C6E37 /* PBXTextBookmark */ = {
+	22A1BC010E49285D003C7C07 /* drcom4mac */ = {
+		activeExec = 0;
+	};
+	22A1BC130E4928C3003C7C07 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 226A4E230E490244005F3ED6 /* client_daemon.h */;
 		name = "client_daemon.h: 1";
