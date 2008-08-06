@@ -14,7 +14,7 @@
 #include <netinet/tcp.h>
 #include <signal.h>
 
-#include "drcom.h"
+#include "daemon_kernel.h"
 
 void signal_func(int signum)
 {
