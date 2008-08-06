@@ -64,15 +64,17 @@ static void daemonize(void)
 
 static void load_kernel_module(void)
 {
+/*
 	int r;
 	char s[50];
 
-	strcpy(s, "/sbin/modprobe drcom");
+	strcpy(s, "/sbin/kextload drcom.kext");
 	r = system(s);
 	if (r) {
 		fprintf(stderr, "drcomd: Error loading drcom module\n");
 		exit(EXIT_FAILURE);
 	}
+ */
 }
 
 static void do_one_client(int s, struct drcom_handle *h)
