@@ -79,19 +79,17 @@ static bool g_autologout = false;
 
 #if defined(DEBUG)
 
-#define dprintf(...)			drcom_printf(__VA_ARGS__)
+#define dprintf(...)			drcom_printf(__FILE__, __LINE__, __VA_ARGS__)
 
 static void
-drcom_printf(const char *fmt, ...)
+drcom_printf(const char * file, const unsigned line, const char *fmt, ...)
 {
 	va_list listp;
-	char log_buffer[92];
+	static char log_buffer[512];
 	
-	va_start(listp, fmt);
-	
+	va_start(listp, fmt);	
 	vsnprintf(log_buffer, sizeof(log_buffer), fmt, listp);
-	printf("drcom.kext: %s\n", log_buffer);
-	
+	printf("drcom.kext(%u): %s\n", line, log_buffer);	
 	va_end(listp);
 }
 
